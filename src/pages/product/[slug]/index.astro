@@ -1,0 +1,82 @@
+---
+import { Product, products } from "../../../data";
+import Layout from "../../../layouts/Layout.astro";
+import ProductCard from "../../../components/ProductCard.astro";
+const { slug } = Astro.params;
+
+export function getStaticPaths() {
+  return [
+    ...products.map((product) => ({
+      params: {
+        slug: product.slug,
+      },
+    })),
+  ];
+}
+
+const product = products.find((product) => product.slug === slug) as Product;
+---
+
+<Layout title={product.name}>
+  <div class="flex gap-2 pb-2 items-center text-gray-500">
+    <a class="after:content-['/'] after:pl-2" href="/">home</a>
+    <span class="after:content-['/'] after:pl-2">{product.category}</span>
+    <span>{product.name}</span>
+  </div>
+  <div class="flex gap-8">
+    <div class="max-w-[450px] w-full h-full max-h-[450px]">
+      <img
+        src={product.cover}
+        alt={product.name}
+        class="w-full h-full object-cover rounded-xl shadow-2xl shadow-gray-200 border-b"
+        transition:name={`${slug} image`}
+      />
+    </div>
+    <article class="py-4 flex justify-between flex-col">
+      <div>
+        <h1 class="text-5xl font-bold animate-in">
+          {product.name}
+        </h1>
+        <div transition:name={`${slug} title`}></div>
+        <p
+          class="max-w-sm py-4 text-lg"
+          transition:name={`${slug} description`}
+        >
+          {product.description}
+        </p>
+      </div>
+      <div class="pt-8 text-right">
+        <div class="text-3xl font-semibold" transition:name={`${slug} price`}>
+          ${product.price}
+        </div>
+        <button
+          type="button"
+          class="mt-4 px-6 py-2 bg-gray-900 text-white font-semibold text-sm rounded"
+          >Add to cart</button
+        >
+      </div>
+    </article>
+  </div>
+  <div class="py-20 max-w-lg">
+    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Incidunt magnam
+    quia, explicabo dolor velit aut omnis natus consequatur possimus fuga illo
+    commodi asperiores dignissimos. Consequuntur nam quae commodi quas, magni
+  </div>
+  <h4 class="font-bold text-lg">Similar products</h4>
+  <div class="flex gap-4">
+    {
+      products
+        .filter((p) => p.category === product.category && p.id !== product.id)
+        .map((pr) => <ProductCard product={pr} />)
+    }
+  </div>
+</Layout>
+
+<script>
+  document.addEventListener("click", (event) => {
+    if (location.pathname === "/") return;
+    if ((event as any)?.target?.tagName === "A") {
+      document.querySelector(".animate-in")?.classList.add("opacity-0");
+    }
+  });
+</script>
