@@ -11,7 +11,7 @@ import ProductCard from "../components/ProductCard.astro";
   <h3 class="text-xl text-gray-500">
     Take a look in our products, feel free to buy some
   </h3>
-  <div class="flex flex-wrap gap-4 py-8">
+  <div class="flex flex-wrap justify-center sm:justify-normal gap-4 py-8">
     {products.map((product) => <ProductCard {product} />)}
   </div>
 </Layout>
