@@ -1,4 +1,5 @@
 ---
+import Icon from "astro-icon";
 import { ViewTransitions } from "astro:transitions";
 interface Props {
   title: string;
@@ -18,10 +19,28 @@ const { title } = Astro.props;
     <title>{title} - Astro Transitions Shop</title>
     <ViewTransitions />
   </head>
-  <body>
-    <main class="relative max-w-6xl mx-auto py-6 lg:py-10 px-4">
+  <body class="bg-gradient-to-tl via-transparent from-gray-500/5">
+    <nav class="absolute top-0 right-0 p-6 lg:p-2">
+      <a href="https://github.com/igorm84/astro-shop" target="_blank">
+        <Icon name="mdi:github" class="h-6 w-6 lg:h-8 lg:w-8 text-gray-800" />
+      </a>
+    </nav>
+    <main
+      class="relative max-w-6xl min-h-screen mx-auto py-6 lg:pt-10 px-4 pb-20"
+    >
       <slot />
+      <footer
+        class="text-gray-400 text-xs text-center py-8 absolute bottom-0 inset-x-0"
+      >
+        <a
+          href="https://github.com/igorm84"
+          class="inline-flex items-center gap-2"
+          target="_blank"
+          >Built by Igor Penaque @ 2023
+        </a>
+      </footer>
     </main>
+
     <style is:global>
       :root {
       }
@@ -30,6 +49,26 @@ const { title } = Astro.props;
       }
       .animate-in {
         animation: animate-in 0.5s ease-in-out;
+      }
+      /* Firefox */
+      * {
+        scrollbar-width: auto;
+        scrollbar-color: #c7c7c7 #ededed;
+      }
+
+      /* Chrome, Edge, and Safari */
+      *::-webkit-scrollbar {
+        width: 15px;
+      }
+
+      *::-webkit-scrollbar-track {
+        background: #ededed;
+      }
+
+      *::-webkit-scrollbar-thumb {
+        background-color: #c7c7c7;
+        border-radius: 5px;
+        border: 2px solid #ffffff;
       }
       @keyframes animate-in {
         0% {

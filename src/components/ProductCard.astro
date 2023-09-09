@@ -29,12 +29,12 @@ const transitionName = product.slug;
         {product.name}
       </h3>
       <p
-        class="truncate text-sm text-gray-600"
+        class="text-gray-600 text-sm truncate"
         transition:name={`${transitionName} description`}
       >
         {product.description}
       </p>
-      <div class="text-right pt-4" transition:name={`${transitionName} price`}>
+      <div class="text-right mt-4" transition:name={`${transitionName} price`}>
         <span class="font-semibold">${product.price}</span>
       </div>
     </div>
