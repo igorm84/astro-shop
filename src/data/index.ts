@@ -39,7 +39,7 @@ export const products: Product[] = [
     slug: "nike-jordan-mvp",
     price: 299,
     description: "Dominate the Court with Nike Jordan MVP Basketball Shoes.",
-    cover: "/products/nike-jordan-mvp.avif",
+    cover: "/products/nike-jordan-mvp.webp",
     category: ProductCategory.Shoes,
   },
   {
@@ -51,5 +51,15 @@ export const products: Product[] = [
       "Stay Cool and Dry with the Dri-FIT 23 Active Shirt. This Shirt is Made with Sweat-Wicking Fabric to Keep You Dry and Comfortable.",
     cover: "/products/dri-fit-23-shirt.avif",
     category: ProductCategory.Shirts,
+  },
+  {
+    id: 5,
+    name: "Nike Air 270",
+    slug: "nike-air-270",
+    price: 399,
+    description:
+      "Nike Air 270 Shoes are the Perfect Blend of Style and Comfort.",
+    cover: "/products/nike-air-270.png",
+    category: ProductCategory.Shoes,
   },
 ];
