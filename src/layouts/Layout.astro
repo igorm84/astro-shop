@@ -12,6 +12,8 @@ const {
   image = "/products/nike-airmax.avif",
   description = "A simple Shop built in Astro using View Transitions and TailwindCSS",
 } = Astro.props;
+
+const imageUrl = Astro.request.url + image.replace(/^\//, "");
 ---
 
 <!doctype html>
@@ -22,12 +24,12 @@ const {
 
     <meta property="og:title" content={title} />
     <meta property="og:type" content="product" />
-    <meta property="og:image" content={image} />
+    <meta property="og:image" content={imageUrl} />
     <meta property="og:description" content={description} />
 
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={image} />
+    <meta name="twitter:image" content={imageUrl} />
     <meta name="twitter:card" content="summary_large_image" />
 
     <meta name="viewport" content="width=device-width" />
@@ -45,6 +47,8 @@ const {
     <main
       class="relative max-w-6xl min-h-screen mx-auto py-6 lg:pt-10 px-4 pb-20"
     >
+      eqwqweqweqwe
+      {Astro.request.url}
       <slot />
       <footer
         class="text-gray-400 text-xs text-center py-8 absolute bottom-0 inset-x-0"
