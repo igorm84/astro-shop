@@ -18,7 +18,11 @@ export function getStaticPaths() {
 const product = products.find((product) => product.slug === slug) as Product;
 ---
 
-<Layout title={product.name}>
+<Layout
+  title={product.name}
+  description={product.description}
+  image={product.cover}
+>
   <div class="max-w-5xl mx-auto relative">
     <a
       href="/"

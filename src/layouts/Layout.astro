@@ -3,16 +3,33 @@ import Icon from "astro-icon";
 import { ViewTransitions } from "astro:transitions";
 interface Props {
   title: string;
+  image?: string;
+  description?: string;
 }
 
-const { title } = Astro.props;
+const {
+  title,
+  image = "/products/nike-airmax.avif",
+  description = "A simple Shop built in Astro using View Transitions and TailwindCSS",
+} = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Astro description" />
+    <meta name="description" content={description} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:type" content="product" />
+    <meta property="og:image" content={image} />
+    <meta property="og:description" content={description} />
+
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+    <meta name="twitter:card" content="summary_large_image" />
+
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
