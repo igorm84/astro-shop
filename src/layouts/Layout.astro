@@ -13,7 +13,9 @@ const {
   description = "A simple Shop built in Astro using View Transitions and TailwindCSS",
 } = Astro.props;
 
-const imageUrl = Astro.request.url + image.replace(/^\//, "");
+const imageUrl = import.meta.env.PUBLIC_URL
+  ? new URL(image, import.meta.env.PUBLIC_URL)
+  : image;
 ---
 
 <!doctype html>
