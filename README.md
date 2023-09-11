@@ -10,7 +10,9 @@ Astro Shop is a minimalist page with [Astro View Transitions](https://docs.astro
 
 You need to set `PUBLIC_URL` environment variable that points to the url of the page, so we can provide Metadata image's URL
 
-View Transition is a **experimental** mechanism to transition between DOM states, learn more in these links:
+
+### About View Transitions
+View Transitions is a **experimental** mechanism to transition between DOM states, learn more in these links:
 
 - Astro Documentation: https://docs.astro.build/en/guides/view-transitions/
 - MDN Documentation: https://developer.mozilla.org/en-US/docs/Web/API/View_Transitions_API
