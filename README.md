@@ -4,7 +4,8 @@ Astro Shop is a minimalist page with [Astro View Transitions](https://docs.astro
 
 [See Live Preview](https://astro-shop-fawn.vercel.app/)
 
-![image](https://github.com/igorm84/astro-shop/assets/16727448/9f3929aa-719d-442e-b755-d9a03a18affe)
+![astro-shop-anim](https://github.com/igorm84/astro-shop/assets/16727448/41c97e04-dc16-48d3-b77d-73a3ec898000)
+
 
 ### Environment Variables
 
