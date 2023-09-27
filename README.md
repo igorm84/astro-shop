@@ -1,4 +1,4 @@
-# Astro Shop
+# Astro Shop [![Built with Astro](https://astro.badg.es/v2/built-with-astro/tiny.svg)](https://astro.build)
 
 Astro Shop is a minimalist page with [Astro View Transitions](https://docs.astro.build/en/guides/view-transitions/), an experimental feature built for smooth e seamless navigations + TailwindCSS
 
