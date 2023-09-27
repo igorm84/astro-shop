@@ -11,45 +11,58 @@ export interface Product {
   price: number;
   description: string;
   cover: string;
+  coverCredits: string;
   category: ProductCategory;
 }
+
 export const products: Product[] = [
   {
-    id: 1,
-    name: "Nike Airmax",
-    slug: "nike-airmax",
+    id: 32,
+    name: "705 Shirt Brave",
+    slug: "705-shirt-brave",
+    price: 129,
+    description:
+      "Stay Brave with the 705 Shirt from Ryan Hoffman Collection. Show your bravery and drinks some beer with.",
+    cover: "/products/ryan-hoffman-A7f7XRKgUWc-unsplash.webp",
+    coverCredits:
+      "https://unsplash.com/photos/A7f7XRKgUWc?utm_source=unsplash&utm_medium=referral&utm_content=creditShareLink",
+    category: ProductCategory.Shirts,
+  },
+  {
+    id: 18,
+    name: "Haryo Setyadi Shirt",
+    slug: "haryo-setyadi-shirt",
     price: 199,
     description:
-      "Experience Unmatched Comfort and Style with Nike Airmax Shoes.",
-    cover: "/products/nike-airmax.webp",
-    category: ProductCategory.Shoes,
+      "Feel the Comfort and Peace of the Haryo Setyadi Shirt white as snow. Don't worry about the stain, it's easy to clean.",
+    cover: "/products/haryo-setyadi-acn5ERAeSb4-unsplash.webp",
+    coverCredits:
+      "https://unsplash.com/photos/acn5ERAeSb4?utm_source=unsplash&utm_medium=referral&utm_content=creditShareLink",
+    category: ProductCategory.Shirts,
   },
   {
-    id: 2,
-    name: "Nike ZoomX Invincible",
-    slug: "nike-zoomx-invincible",
-    price: 599,
-    description: "Elevate Your Running Experience with Nike ZoomX Invincible.",
-    cover: "/products/nike-zoomx-invincible.webp",
-    category: ProductCategory.Shoes,
+    id: 21,
+    name: "Faith Yarn shirt",
+    slug: "faith-yarn-shirt",
+    price: 59,
+    description:
+      "Elevate Your Style and Comfort with the Faith Yarn Shoes. Designed to stay cool and dry all day.",
+    cover: "/products/faith-yarn-Wr0TpKqf26s-unsplash.webp",
+    coverCredits:
+      "https://unsplash.com/photos/Wr0TpKqf26s?utm_source=unsplash&utm_medium=referral&utm_content=creditShareLink",
+    category: ProductCategory.Shirts,
   },
+
   {
-    id: 3,
-    name: "Nike Jordan MVP",
-    slug: "nike-jordan-mvp",
-    price: 299,
-    description: "Dominate the Court with Nike Jordan MVP Basketball Shoes.",
-    cover: "/products/nike-jordan-mvp.webp",
-    category: ProductCategory.Shoes,
-  },
-  {
-    id: 4,
-    name: "Dri-FIT 23 Shirt",
-    slug: "dri-fit-23-shirt",
+    id: 49,
+    name: "T Shirt 32",
+    slug: "t-shirt-32",
     price: 99,
     description:
-      "Stay Cool and Dry with the Dri-FIT 23 Active Shirt. This Shirt is Made with Sweat-Wicking Fabric to Keep You Dry and Comfortable.",
-    cover: "/products/dri-fit-23-shirt.webp",
+      "Stay Cool and Dry with the T Shirt 32 from Ryan Hoffman Collection. Relax, run, dream.",
+    cover: "/products/ryan-hoffman-6Nub980bI3I-unsplash.webp",
+    coverCredits:
+      "https://unsplash.com/photos/6Nub980bI3I?utm_source=unsplash&utm_medium=referral&utm_content=creditShareLink",
     category: ProductCategory.Shirts,
   },
 ];
