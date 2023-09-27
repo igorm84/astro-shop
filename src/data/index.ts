@@ -19,7 +19,7 @@ export const products: Product[] = [
   {
     id: 32,
     name: "705 Shirt Brave",
-    slug: "705-shirt-brave",
+    slug: "t-705-shirt-brave",
     price: 129,
     description:
       "Stay Brave with the 705 Shirt from Ryan Hoffman Collection. Show your bravery and drinks some beer with.",
