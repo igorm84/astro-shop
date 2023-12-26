@@ -1,5 +1,8 @@
 # Astro Shop [![Built with Astro](https://astro.badg.es/v2/built-with-astro/tiny.svg)](https://astro.build)
 
+See the final repository and tutorial in Codrops
+https://github.com/codrops/astro-shop-view-transitions
+
 Astro Shop is a minimalist page with [Astro View Transitions](https://docs.astro.build/en/guides/view-transitions/), an experimental feature built for smooth e seamless navigations + TailwindCSS
 
 [See Live Preview](https://astro-shop-fawn.vercel.app/)
