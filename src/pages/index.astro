@@ -2,18 +2,82 @@
 import Layout from "../layouts/Layout.astro";
 import { products } from "../data";
 import ProductCard from "../components/ProductCard.astro";
+import SortMenu from "../components/SortMenu.astro";
 ---
 
 <Layout title="Shop">
-  <div class="flex gap-3 items-end">
-    <h1 class="text-4xl font-bold">Astro Shop</h1>
-  </div>
-  <h3 class="text-xl text-gray-500">
-    Take a look in our products, feel free to buy some
-  </h3>
-  <div class="flex flex-wrap justify-center sm:justify-normal gap-4 py-8">
-    {products.map((product) => (
-      <ProductCard {product} />
-    ))}
-  </div>
+  <product-grid class="mx-auto block max-w-6xl px-4 pt-10 sm:px-6 sm:pt-16">
+    <div class="flex flex-col items-start gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
+      <div>
+        <h1 class="text-4xl leading-none font-bold tracking-tight font-stretch-expanded sm:text-5xl">
+          Shirts
+        </h1>
+        <p class="mt-3 text-muted">
+          Everyday shirts in black and white. Pick one to see it up close.
+        </p>
+      </div>
+      <SortMenu
+        label="Sort shirts"
+        options={[
+          { value: "featured", label: "Featured" },
+          { value: "price-asc", label: "Lowest price" },
+          { value: "price-desc", label: "Highest price" },
+          { value: "name", label: "Name" },
+        ]}
+      />
+    </div>
+
+    <div
+      data-grid
+      class="-mx-2 mt-14 grid grid-cols-2 gap-y-14 sm:-mx-4 lg:grid-cols-4"
+    >
+      {products.map((product, index) => (
+        <ProductCard {product} {index} />
+      ))}
+    </div>
+  </product-grid>
 </Layout>
+
+<script>
+  class ProductGrid extends HTMLElement {
+    connectedCallback() {
+      const sort = this.querySelector<HTMLElement & { value: string }>(
+        "sort-menu",
+      );
+      const grid = this.querySelector<HTMLElement>("[data-grid]");
+      if (!sort || !grid) return;
+
+      sort.addEventListener("change", () => {
+        const cards = [
+          ...grid.querySelectorAll<HTMLElement>("[data-product-card]"),
+        ];
+        const price = (el: HTMLElement) => Number(el.dataset.price);
+        const compare: Record<
+          string,
+          (a: HTMLElement, b: HTMLElement) => number
+        > = {
+          featured: (a, b) => Number(a.dataset.index) - Number(b.dataset.index),
+          "price-asc": (a, b) => price(a) - price(b),
+          "price-desc": (a, b) => price(b) - price(a),
+          name: (a, b) =>
+            (a.dataset.name ?? "").localeCompare(b.dataset.name ?? ""),
+        };
+        const sorted = cards.sort(compare[sort.value] ?? compare.featured);
+
+        const reorder = () => grid.append(...sorted);
+        if (
+          "startViewTransition" in document &&
+          !matchMedia("(prefers-reduced-motion: reduce)").matches
+        ) {
+          document.startViewTransition(reorder);
+        } else {
+          reorder();
+        }
+      });
+    }
+  }
+
+  if (!customElements.get("product-grid")) {
+    customElements.define("product-grid", ProductGrid);
+  }
+</script>

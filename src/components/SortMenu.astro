@@ -1,0 +1,200 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  options: { value: string; label: string }[];
+  label: string;
+}
+
+const { options, label } = Astro.props;
+const [initial] = options;
+---
+
+<sort-menu class="relative block" data-value={initial.value}>
+  <button
+    type="button"
+    data-trigger
+    aria-haspopup="listbox"
+    aria-expanded="false"
+    aria-controls="sort-listbox"
+    class="group flex items-center gap-1.5 py-1 font-medium transition-colors hover:text-muted"
+  >
+    <span class="sr-only">{label}:</span>
+    <span data-current>{initial.label}</span>
+    <Icon
+      name="mdi:chevron-down"
+      class="size-4 transition-transform duration-200 group-aria-expanded:rotate-180"
+    />
+  </button>
+
+  <ul
+    id="sort-listbox"
+    role="listbox"
+    tabindex="-1"
+    aria-label={label}
+    hidden
+    class="absolute top-full left-0 z-30 sm:right-0 sm:left-auto mt-2 min-w-48 border border-ink bg-paper py-1 text-sm outline-none"
+  >
+    {options.map((option, i) => (
+      <li
+        id={`sort-option-${option.value}`}
+        role="option"
+        data-value={option.value}
+        aria-selected={i === 0 ? "true" : "false"}
+        class="group flex cursor-pointer items-center justify-between gap-6 px-4 py-2.5 text-muted aria-selected:text-ink data-active:bg-wash data-active:text-ink"
+      >
+        {option.label}
+        <Icon
+          name="mdi:check"
+          class="size-4 opacity-0 group-aria-selected:opacity-100"
+        />
+      </li>
+    ))}
+  </ul>
+</sort-menu>
+
+<script>
+  /**
+   * A listbox dropdown (WAI-ARIA "select-only combobox" pattern, simplified):
+   * the trigger opens a list that takes focus and tracks the active option via
+   * aria-activedescendant. Emits a `change` event with the chosen value.
+   */
+  class SortMenu extends HTMLElement {
+    #trigger!: HTMLButtonElement;
+    #list!: HTMLUListElement;
+    #active = 0;
+
+    #onOutside = (event: PointerEvent) => {
+      if (!this.contains(event.target as Node)) this.close(false);
+    };
+
+    get value() {
+      return this.dataset.value ?? "";
+    }
+
+    get #options() {
+      return [...this.#list.querySelectorAll<HTMLLIElement>("[role=option]")];
+    }
+
+    connectedCallback() {
+      this.#trigger = this.querySelector("[data-trigger]")!;
+      this.#list = this.querySelector("[role=listbox]")!;
+
+      this.#trigger.addEventListener("click", () =>
+        this.#list.hidden ? this.open() : this.close(),
+      );
+      this.#trigger.addEventListener("keydown", (event) => {
+        if (["ArrowDown", "ArrowUp"].includes(event.key)) {
+          event.preventDefault();
+          this.open();
+        }
+      });
+
+      this.#list.addEventListener("click", (event) => {
+        const option = (event.target as HTMLElement).closest<HTMLLIElement>(
+          "[role=option]",
+        );
+        if (option) this.select(this.#options.indexOf(option));
+      });
+      this.#list.addEventListener("pointermove", (event) => {
+        const option = (event.target as HTMLElement).closest<HTMLLIElement>(
+          "[role=option]",
+        );
+        if (option) this.#highlight(this.#options.indexOf(option));
+      });
+      this.#list.addEventListener("keydown", (event) => this.#onKey(event));
+      this.#list.addEventListener("focusout", (event) => {
+        if (!this.contains(event.relatedTarget as Node)) this.close(false);
+      });
+    }
+
+    disconnectedCallback() {
+      document.removeEventListener("pointerdown", this.#onOutside);
+    }
+
+    open() {
+      const selected = this.#options.findIndex(
+        (o) => o.getAttribute("aria-selected") === "true",
+      );
+      this.#list.hidden = false;
+      this.#trigger.setAttribute("aria-expanded", "true");
+      this.#highlight(Math.max(0, selected));
+      this.#list.focus();
+      document.addEventListener("pointerdown", this.#onOutside);
+    }
+
+    close(restoreFocus = true) {
+      if (this.#list.hidden) return;
+      this.#list.hidden = true;
+      this.#trigger.setAttribute("aria-expanded", "false");
+      document.removeEventListener("pointerdown", this.#onOutside);
+      if (restoreFocus) this.#trigger.focus();
+    }
+
+    select(index: number) {
+      const option = this.#options[index];
+      if (!option) return;
+      this.#options.forEach((o) =>
+        o.setAttribute("aria-selected", String(o === option)),
+      );
+      this.querySelector("[data-current]")!.textContent =
+        option.textContent?.trim() ?? "";
+      this.close();
+
+      if (option.dataset.value !== this.value) {
+        this.dataset.value = option.dataset.value;
+        this.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+    }
+
+    #highlight(index: number) {
+      const options = this.#options;
+      this.#active = (index + options.length) % options.length;
+      options.forEach((o, i) =>
+        o.toggleAttribute("data-active", i === this.#active),
+      );
+      this.#list.setAttribute(
+        "aria-activedescendant",
+        options[this.#active].id,
+      );
+    }
+
+    #onKey(event: KeyboardEvent) {
+      const last = this.#options.length - 1;
+      const moves: Record<string, number> = {
+        ArrowDown: this.#active + 1,
+        ArrowUp: this.#active - 1,
+        Home: 0,
+        End: last,
+      };
+
+      if (event.key in moves) {
+        event.preventDefault();
+        this.#highlight(Math.min(last, Math.max(0, moves[event.key])));
+      } else if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        this.select(this.#active);
+      } else if (event.key === "Escape") {
+        event.preventDefault();
+        this.close();
+      } else if (event.key === "Tab") {
+        this.close(false);
+      } else if (event.key.length === 1) {
+        // Type-ahead: jump to the next option starting with the typed letter.
+        const key = event.key.toLowerCase();
+        const options = this.#options;
+        for (let step = 1; step <= options.length; step++) {
+          const i = (this.#active + step) % options.length;
+          if (options[i].textContent?.trim().toLowerCase().startsWith(key)) {
+            this.#highlight(i);
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  if (!customElements.get("sort-menu")) {
+    customElements.define("sort-menu", SortMenu);
+  }
+</script>

@@ -1,0 +1,264 @@
+---
+import { Icon } from "astro-icon/components";
+---
+
+<cart-drawer>
+  <dialog class="drawer" aria-labelledby="cart-title">
+    <div class="flex h-full flex-col">
+      <div class="flex h-16 items-center justify-between px-5">
+        <h2 id="cart-title" class="text-lg font-bold font-stretch-expanded">
+          Bag{" "}
+          <span data-cart-heading-count class="ml-1 font-normal">
+            0
+          </span>
+        </h2>
+        <button
+          type="button"
+          data-cart-close
+          class="text-muted transition-colors hover:text-ink"
+          aria-label="Close bag"
+        >
+          <Icon name="mdi:close" class="size-5" />
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto overscroll-contain">
+        <ul
+          data-cart-items
+          class="divide-y divide-line border-y border-line px-5"
+        ></ul>
+        <p data-cart-empty class="px-5 py-16 text-muted" hidden>
+          Your bag is empty.
+          <a
+            href="/"
+            data-cart-close
+            class="mt-2 block font-medium text-ink underline underline-offset-4"
+          >
+            Browse shirts
+          </a>
+        </p>
+      </div>
+
+      <div data-cart-footer class="px-5 py-6">
+        <div class="flex justify-between font-medium">
+          <span>Subtotal</span>
+          <span data-cart-subtotal class="tabular-nums"></span>
+        </div>
+        <button
+          type="button"
+          data-cart-checkout
+          class="mt-5 h-12 w-full rounded-sm bg-ink font-medium text-paper transition-colors hover:bg-ink/80"
+        >
+          Check out
+        </button>
+        <p
+          data-cart-checkout-note
+          class="mt-3 text-center text-xs text-muted"
+          role="status"
+        ></p>
+      </div>
+    </div>
+  </dialog>
+
+  <template data-cart-item-template>
+    <li class="flex gap-4 py-5">
+      <a
+        data-item-link
+        tabindex="-1"
+        aria-hidden="true"
+        class="block size-20 shrink-0 overflow-hidden"
+      >
+        <img data-item-image alt="" class="size-full object-cover" />
+      </a>
+      <div class="flex min-w-0 flex-1 flex-col text-sm">
+        <div class="flex justify-between gap-3">
+          <a
+            data-item-link
+            data-item-name
+            class="truncate font-medium hover:underline"
+          ></a>
+          <span data-item-total class="tabular-nums"></span>
+        </div>
+        <p data-item-size class="text-muted"></p>
+        <div class="mt-auto flex items-center justify-between pt-2">
+          <div class="flex items-center gap-3">
+            <button
+              type="button"
+              data-item-decrement
+              class="text-muted transition-colors hover:text-ink"
+            >
+              <Icon name="mdi:minus" class="size-4" />
+            </button>
+            <span
+              data-item-quantity
+              class="w-4 text-center tabular-nums"
+            ></span>
+            <button
+              type="button"
+              data-item-increment
+              class="text-muted transition-colors hover:text-ink disabled:opacity-30"
+            >
+              <Icon name="mdi:plus" class="size-4" />
+            </button>
+          </div>
+          <button
+            type="button"
+            data-item-remove
+            class="text-xs text-muted underline-offset-2 transition-colors hover:text-ink hover:underline"
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+    </li>
+  </template>
+</cart-drawer>
+
+<script>
+  import {
+    CART_CHANGE,
+    CART_OPEN,
+    MAX_QUANTITY,
+    cartCount,
+    cartSubtotal,
+    formatPrice,
+    getCart,
+    openCart,
+    removeFromCart,
+    updateQuantity,
+    type CartItem,
+  } from "../scripts/cart";
+
+  class CartDrawer extends HTMLElement {
+    #dialog!: HTMLDialogElement;
+    #onOpen = () => this.open();
+    #onChange = () => this.render();
+
+    connectedCallback() {
+      this.#dialog = this.querySelector("dialog")!;
+      window.addEventListener(CART_OPEN, this.#onOpen);
+      window.addEventListener(CART_CHANGE, this.#onChange);
+
+      this.#dialog.addEventListener("click", (event) => {
+        const target = event.target as HTMLElement;
+        // Clicking the backdrop targets the dialog element itself.
+        if (
+          target === this.#dialog ||
+          target.closest("[data-cart-close], [data-item-link]")
+        ) {
+          this.#dialog.close();
+        }
+        if (target.closest("[data-cart-checkout]")) {
+          this.query("[data-cart-checkout-note]").textContent =
+            "Checkout is turned off in this demo store.";
+        }
+      });
+
+      this.render();
+    }
+
+    disconnectedCallback() {
+      window.removeEventListener(CART_OPEN, this.#onOpen);
+      window.removeEventListener(CART_CHANGE, this.#onChange);
+    }
+
+    open() {
+      this.render();
+      this.query("[data-cart-checkout-note]").textContent = "";
+      if (!this.#dialog.open) this.#dialog.showModal();
+    }
+
+    query<T extends HTMLElement = HTMLElement>(selector: string): T {
+      return this.querySelector<T>(selector)!;
+    }
+
+    render() {
+      const items = getCart();
+      const count = cartCount(items);
+
+      this.query("[data-cart-heading-count]").textContent = String(count);
+      this.query("[data-cart-empty]").hidden = count > 0;
+      this.query("[data-cart-footer]").hidden = count === 0;
+      this.query("[data-cart-subtotal]").textContent = formatPrice(
+        cartSubtotal(items),
+      );
+
+      // Re-rendering replaces the buttons, so remember which one had focus.
+      const focusKey = (document.activeElement as HTMLElement | null)?.dataset
+        ?.focusKey;
+      const list = this.query<HTMLUListElement>("[data-cart-items]");
+      list.replaceChildren(...items.map((item) => this.renderItem(item)));
+
+      if (focusKey && this.#dialog.open) {
+        const target =
+          list.querySelector<HTMLElement>(
+            `[data-focus-key="${CSS.escape(focusKey)}"]:not(:disabled)`,
+          ) ?? this.query("[data-cart-close]");
+        target.focus();
+      }
+    }
+
+    renderItem(item: CartItem) {
+      const template = this.query<HTMLTemplateElement>(
+        "[data-cart-item-template]",
+      );
+      const node = template.content.firstElementChild!.cloneNode(
+        true,
+      ) as HTMLLIElement;
+      const label = `${item.name}, size ${item.size}`;
+      const el = <T extends HTMLElement>(selector: string) =>
+        node.querySelector<T>(selector)!;
+
+      node
+        .querySelectorAll<HTMLAnchorElement>("[data-item-link]")
+        .forEach((link) => (link.href = `/product/${item.slug}`));
+      el<HTMLImageElement>("[data-item-image]").src = item.cover;
+      el("[data-item-name]").textContent = item.name;
+      el("[data-item-size]").textContent = `Size ${item.size}`;
+      el("[data-item-total]").textContent = formatPrice(
+        item.price * item.quantity,
+      );
+      el("[data-item-quantity]").textContent = String(item.quantity);
+
+      const controls: [string, string, () => void][] = [
+        [
+          "decrement",
+          `Decrease quantity of ${label}`,
+          () => updateQuantity(item.slug, item.size, item.quantity - 1),
+        ],
+        [
+          "increment",
+          `Increase quantity of ${label}`,
+          () => updateQuantity(item.slug, item.size, item.quantity + 1),
+        ],
+        [
+          "remove",
+          `Remove ${label} from bag`,
+          () => removeFromCart(item.slug, item.size),
+        ],
+      ];
+      for (const [name, ariaLabel, action] of controls) {
+        const button = el<HTMLButtonElement>(`[data-item-${name}]`);
+        button.dataset.focusKey = `${item.slug}|${item.size}|${name}`;
+        button.setAttribute("aria-label", ariaLabel);
+        button.addEventListener("click", action);
+      }
+      el<HTMLButtonElement>("[data-item-increment]").disabled =
+        item.quantity >= MAX_QUANTITY;
+
+      return node;
+    }
+  }
+
+  if (!customElements.get("cart-drawer")) {
+    customElements.define("cart-drawer", CartDrawer);
+  }
+
+  // Any element with [data-cart-open] opens the drawer. The document survives
+  // View Transition navigations, so a single delegated listener is enough.
+  document.addEventListener("click", (event) => {
+    if ((event.target as HTMLElement).closest?.("[data-cart-open]")) {
+      openCart();
+    }
+  });
+</script>
