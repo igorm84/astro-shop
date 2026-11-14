@@ -3,19 +3,15 @@
 See the final repository and tutorial in Codrops
 https://github.com/codrops/astro-shop-view-transitions
 
-Astro Shop is a minimalist page with [Astro View Transitions](https://docs.astro.build/en/guides/view-transitions/), an experimental feature built for smooth e seamless navigations + TailwindCSS
+Astro Shop is a minimalist page with [Astro View Transitions](https://docs.astro.build/en/guides/view-transitions/), built for smooth and seamless navigations + TailwindCSS
 
 [See Live Preview](https://astro-shop-fawn.vercel.app/)
 
 ![astro-shop-anim](https://github.com/igorm84/astro-shop/assets/16727448/41c97e04-dc16-48d3-b77d-73a3ec898000)
 
-### Environment Variables
-
-You need to set `PUBLIC_URL` environment variable that points to the url of the page, so we can provide Metadata image's URL
-
 ### Development and validation
 
-Use Node.js 22.22.0 or newer and pnpm 10.34.7 (pinned in `package.json`). With Corepack enabled:
+Use Node.js 22.23.4 or newer (required by Astro 7.4.12) and pnpm 10.34.7 (pinned in `package.json`). With Corepack enabled:
 
 ```sh
 corepack pnpm install --frozen-lockfile
@@ -35,11 +31,15 @@ Tailwind CSS 4 uses its Vite plugin with explicit compatibility styles in `src/s
 
 ### About View Transitions
 
-View Transitions is a **experimental** mechanism to transition between DOM states, learn more in these links:
+View Transitions is a browser mechanism to animate between DOM states, learn more in these links:
 
 - Astro Documentation: https://docs.astro.build/en/guides/view-transitions/
 - MDN Documentation: https://developer.mozilla.org/en-US/docs/Web/API/View_Transitions_API
 
-#### Firefox and iOS Browsers
+#### Browser Support
 
-Unfornatelly those browsers aren't compatible yet, see https://developer.mozilla.org/en-US/docs/Web/API/View_Transitions_API#browser_compatibility
+Same-document View Transitions are Baseline 2025: Chrome/Edge 111+, Safari/iOS 18+ and Firefox 144+. In older browsers, Astro's `<ClientRouter />` falls back to a simulated animation, so navigation still works. See https://developer.mozilla.org/en-US/docs/Web/API/View_Transitions_API#browser_compatibility
+
+## License
+
+MIT — see [LICENSE](LICENSE).
