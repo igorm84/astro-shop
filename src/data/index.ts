@@ -16,14 +16,10 @@ export interface Product {
   coverAuthor: string;
   coverCredits: string;
   category: ProductCategory;
-  badge?: string;
   color: string;
-  highlights: string[];
 }
 
 export const sizes = ["XS", "S", "M", "L", "XL"] as const;
-
-export const FREE_SHIPPING_THRESHOLD = 150;
 
 export const products: Product[] = [
   {
@@ -38,13 +34,7 @@ export const products: Product[] = [
     coverCredits:
       "https://unsplash.com/photos/A7f7XRKgUWc?utm_source=unsplash&utm_medium=referral&utm_content=creditShareLink",
     category: ProductCategory.Shirts,
-    badge: "Bestseller",
     color: "Black",
-    highlights: [
-      "Long sleeves with a relaxed fit",
-      "Minimal 705 chest print",
-      "Heavyweight brushed cotton",
-    ],
   },
   {
     id: 18,
@@ -58,13 +48,7 @@ export const products: Product[] = [
     coverCredits:
       "https://unsplash.com/photos/acn5ERAeSb4?utm_source=unsplash&utm_medium=referral&utm_content=creditShareLink",
     category: ProductCategory.Shirts,
-    badge: "New",
     color: "Snow white",
-    highlights: [
-      "Stain-resistant finish",
-      "Classic crew neck",
-      "Pre-shrunk premium cotton",
-    ],
   },
   {
     id: 21,
@@ -79,11 +63,6 @@ export const products: Product[] = [
       "https://unsplash.com/photos/Wr0TpKqf26s?utm_source=unsplash&utm_medium=referral&utm_content=creditShareLink",
     category: ProductCategory.Shirts,
     color: "Black",
-    highlights: [
-      "Breathable lightweight jersey",
-      "Tonal front lettering",
-      "Moisture-wicking for warm days",
-    ],
   },
   {
     id: 49,
@@ -98,10 +77,5 @@ export const products: Product[] = [
       "https://unsplash.com/photos/6Nub980bI3I?utm_source=unsplash&utm_medium=referral&utm_content=creditShareLink",
     category: ProductCategory.Shirts,
     color: "Black",
-    highlights: [
-      "Embroidered 705 badge",
-      "Regular fit, true to size",
-      "Soft-washed organic cotton",
-    ],
   },
 ];

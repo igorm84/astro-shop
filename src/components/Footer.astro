@@ -1,113 +1,31 @@
 ---
-import { Icon } from "astro-icon/components";
-import { products } from "../data";
-
 const year = new Date().getFullYear();
 ---
 
-<footer class="mt-24 border-t border-line bg-white/60">
-  <div class="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-12 lg:px-8">
-    <div class="md:col-span-5">
-      <a href="/" class="font-display text-3xl tracking-tight">
-        Astro Shop
-      </a>
-      <p class="mt-3 max-w-sm text-sm leading-relaxed text-muted">
-        A minimalist storefront showcasing seamless page navigation with Astro
-        View Transitions and Tailwind CSS.
-      </p>
+<footer class="mt-24 border-t border-line">
+  <div class="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-8 text-xs text-muted sm:flex-row sm:justify-between sm:px-6">
+    <p>
+      © 2023–{year}{" "}
       <a
-        href="https://github.com/igorm84/astro-shop"
+        href="https://github.com/igorm84"
         target="_blank"
         rel="noopener noreferrer"
-        class="mt-5 inline-flex items-center gap-2 rounded-full border border-line bg-white px-4 py-2 text-sm font-medium transition-colors hover:border-ink"
+        class="hover:text-ink"
       >
-        <Icon name="mdi:github" class="size-4" />
-        Star on GitHub
+        Igor Penaque
       </a>
-    </div>
-
-    <nav aria-label="Products" class="md:col-span-3">
-      <h2 class="text-xs font-semibold tracking-widest text-muted uppercase">
-        Shop
-      </h2>
-      <ul class="mt-4 space-y-2.5 text-sm">
-        {products.map((product) => (
-          <li>
-            <a
-              href={`/product/${product.slug}`}
-              class="text-ink-soft transition-colors hover:text-ink"
-            >
-              {product.name}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
-
-    <nav aria-label="Resources" class="md:col-span-4">
-      <h2 class="text-xs font-semibold tracking-widest text-muted uppercase">
-        Learn
-      </h2>
-      <ul class="mt-4 space-y-2.5 text-sm">
-        <li>
-          <a
-            href="https://github.com/codrops/astro-shop-view-transitions"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-ink-soft transition-colors hover:text-ink"
-          >
-            Codrops tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            href="https://docs.astro.build/en/guides/view-transitions/"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-ink-soft transition-colors hover:text-ink"
-          >
-            Astro View Transitions
-          </a>
-        </li>
-        <li>
-          <a
-            href="https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-ink-soft transition-colors hover:text-ink"
-          >
-            View Transition API on MDN
-          </a>
-        </li>
-      </ul>
-    </nav>
-  </div>
-  <div class="border-t border-line">
-    <div class="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-xs text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-      <p>
-        © 2023–{year}{" "}
-        <a
-          href="https://github.com/igorm84"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="underline-offset-2 hover:text-ink hover:underline"
-        >
-          Igor Penaque
-        </a>
-        . All prices are fictional.
-      </p>
-      <p>
-        Product photography from{" "}
-        <a
-          href="https://unsplash.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="underline-offset-2 hover:text-ink hover:underline"
-        >
-          Unsplash
-        </a>
-        .
-      </p>
-    </div>
+      . Prices are fictional.
+    </p>
+    <p>
+      Built with{" "}
+      <a
+        href="https://docs.astro.build/en/guides/view-transitions/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="hover:text-ink"
+      >
+        Astro View Transitions
+      </a>
+    </p>
   </div>
 </footer>

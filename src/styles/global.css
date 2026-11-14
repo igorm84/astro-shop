@@ -4,41 +4,13 @@
   --font-sans:
     var(--font-inter), ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-display: var(--font-instrument), ui-serif, Georgia, serif;
 
-  /* Warm neutral palette that complements the white studio photography. */
-  --color-paper: #f7f5f2;
-  --color-sand: #ece8e1;
-  --color-ink: #1a1816;
-  --color-ink-soft: #3d3a36;
-  --color-muted: #6f6a63;
-  --color-line: #e3ded6;
-  --color-accent: #c2522d;
-  --color-accent-soft: #f6e4dc;
-
-  --animate-fade-up: fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
-  --animate-bump: bump 0.4s ease-out;
-
-  @keyframes fade-up {
-    from {
-      opacity: 0;
-      transform: translateY(1rem);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes bump {
-    0%,
-    100% {
-      transform: scale(1);
-    }
-    40% {
-      transform: scale(1.35);
-    }
-  }
+  /* Minimal monochrome palette. */
+  --color-paper: #ffffff;
+  --color-surface: #f5f5f4;
+  --color-ink: #171717;
+  --color-muted: #737373;
+  --color-line: #e5e5e5;
 }
 
 @layer base {
@@ -51,7 +23,6 @@
   }
 
   html {
-    scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -61,26 +32,16 @@
     color: var(--color-ink);
   }
 
-  ::selection {
-    background-color: var(--color-ink);
-    color: var(--color-paper);
-  }
-
-  button:not(:disabled),
-  [role="button"]:not(:disabled) {
+  button:not(:disabled) {
     cursor: pointer;
   }
 
   :focus-visible {
     outline: 2px solid var(--color-ink);
-    outline-offset: 3px;
+    outline-offset: 2px;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    html {
-      scroll-behavior: auto;
-    }
-
     *,
     ::before,
     ::after {
@@ -97,19 +58,19 @@
     position: fixed;
     inset: 0 0 0 auto;
     margin: 0;
-    width: min(100%, 28rem);
+    width: min(100%, 26rem);
     height: 100dvh;
     max-height: none;
     max-width: none;
     padding: 0;
     border: 0;
-    background: white;
+    background: var(--color-paper);
     color: inherit;
     transform: translateX(100%);
     transition:
-      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-      overlay 0.35s allow-discrete,
-      display 0.35s allow-discrete;
+      transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+      overlay 0.3s allow-discrete,
+      display 0.3s allow-discrete;
   }
 
   .drawer[open] {
@@ -123,33 +84,20 @@
   }
 
   .drawer::backdrop {
-    background-color: rgb(26 24 22 / 0%);
-    backdrop-filter: blur(0);
+    background-color: rgb(0 0 0 / 0%);
     transition:
-      background-color 0.35s,
-      backdrop-filter 0.35s,
-      overlay 0.35s allow-discrete,
-      display 0.35s allow-discrete;
+      background-color 0.3s,
+      overlay 0.3s allow-discrete,
+      display 0.3s allow-discrete;
   }
 
   .drawer[open]::backdrop {
-    background-color: rgb(26 24 22 / 40%);
-    backdrop-filter: blur(2px);
+    background-color: rgb(0 0 0 / 25%);
   }
 
   @starting-style {
     .drawer[open]::backdrop {
-      background-color: rgb(26 24 22 / 0%);
-      backdrop-filter: blur(0);
+      background-color: rgb(0 0 0 / 0%);
     }
-  }
-
-  /* Accordion chevron rotation. */
-  details[open] > summary .accordion-icon {
-    transform: rotate(180deg);
-  }
-
-  details > summary::-webkit-details-marker {
-    display: none;
   }
 }
