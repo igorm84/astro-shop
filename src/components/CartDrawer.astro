@@ -1,0 +1,335 @@
+---
+import { Icon } from "astro-icon/components";
+import { FREE_SHIPPING_THRESHOLD } from "../data";
+---
+
+<cart-drawer data-free-shipping={FREE_SHIPPING_THRESHOLD}>
+  <dialog class="drawer shadow-2xl" aria-labelledby="cart-title">
+    <div class="flex h-full flex-col">
+      <div class="flex items-center justify-between border-b border-line px-6 py-5">
+        <h2 id="cart-title" class="font-display text-3xl tracking-tight">
+          Your bag{" "}
+          <span
+            data-cart-heading-count
+            class="font-sans text-base text-muted tabular-nums"
+          ></span>
+        </h2>
+        <button
+          type="button"
+          data-cart-close
+          class="grid size-10 place-items-center rounded-full text-ink-soft transition-colors hover:bg-sand hover:text-ink"
+          aria-label="Close shopping bag"
+        >
+          <Icon name="mdi:close" class="size-5" />
+        </button>
+      </div>
+
+      <div data-cart-shipping class="border-b border-line px-6 py-4">
+        <p data-cart-shipping-text class="text-sm text-ink-soft"></p>
+        <div
+          class="mt-2.5 h-1.5 overflow-hidden rounded-full bg-sand"
+          role="progressbar"
+          aria-label="Progress towards free shipping"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          data-cart-shipping-bar
+        >
+          <div
+            data-cart-shipping-fill
+            class="h-full w-0 rounded-full bg-accent transition-[width] duration-500 ease-out"
+          ></div>
+        </div>
+      </div>
+
+      <div class="flex-1 overflow-y-auto overscroll-contain">
+        <ul data-cart-items class="divide-y divide-line px-6"></ul>
+
+        <div
+          data-cart-empty
+          class="flex h-full flex-col items-center justify-center px-6 py-16 text-center"
+          hidden
+        >
+          <div class="grid size-16 place-items-center rounded-full bg-sand text-ink-soft">
+            <Icon name="mdi:shopping-outline" class="size-7" />
+          </div>
+          <p class="mt-5 font-display text-2xl">Your bag is empty</p>
+          <p class="mt-1 text-sm text-muted">
+            Looks like you haven't added anything yet.
+          </p>
+          <a
+            href="/#products"
+            data-cart-close
+            class="mt-6 inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-medium text-paper transition-colors hover:bg-ink-soft"
+          >
+            Start shopping
+            <Icon name="mdi:arrow-right" class="size-4" />
+          </a>
+        </div>
+      </div>
+
+      <div data-cart-footer class="border-t border-line bg-paper/60 px-6 py-6">
+        <dl class="flex items-baseline justify-between">
+          <dt class="text-sm text-ink-soft">Subtotal</dt>
+          <dd
+            data-cart-subtotal
+            class="text-xl font-semibold tabular-nums"
+          ></dd>
+        </dl>
+        <p class="mt-1 text-xs text-muted">
+          Shipping and taxes calculated at checkout.
+        </p>
+        <button
+          type="button"
+          data-cart-checkout
+          class="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-ink px-6 py-3.5 text-sm font-semibold text-paper transition-colors hover:bg-ink-soft"
+        >
+          Checkout
+          <Icon name="mdi:arrow-right" class="size-4" />
+        </button>
+        <p
+          data-cart-checkout-note
+          class="mt-3 text-center text-xs text-muted"
+          role="status"
+        ></p>
+      </div>
+    </div>
+  </dialog>
+
+  <template data-cart-item-template>
+    <li class="flex gap-4 py-5">
+      <a
+        data-item-link
+        class="block size-24 shrink-0 overflow-hidden rounded-xl border border-line bg-white"
+      >
+        <img data-item-image alt="" class="size-full object-cover" />
+      </a>
+      <div class="flex min-w-0 flex-1 flex-col">
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <a
+              data-item-link
+              data-item-name
+              class="block truncate font-medium hover:underline"
+            ></a>
+            <p data-item-size class="mt-0.5 text-sm text-muted"></p>
+          </div>
+          <p data-item-total class="font-medium tabular-nums"></p>
+        </div>
+        <div class="mt-auto flex items-center justify-between pt-3">
+          <div class="inline-flex items-center rounded-full border border-line bg-white">
+            <button
+              type="button"
+              data-item-decrement
+              class="grid size-8 place-items-center rounded-full text-ink-soft transition-colors hover:text-ink"
+            >
+              <Icon name="mdi:minus" class="size-4" />
+            </button>
+            <span
+              data-item-quantity
+              class="w-6 text-center text-sm font-medium tabular-nums"
+            ></span>
+            <button
+              type="button"
+              data-item-increment
+              class="grid size-8 place-items-center rounded-full text-ink-soft transition-colors hover:text-ink disabled:opacity-30"
+            >
+              <Icon name="mdi:plus" class="size-4" />
+            </button>
+          </div>
+          <button
+            type="button"
+            data-item-remove
+            class="inline-flex items-center gap-1 text-xs text-muted transition-colors hover:text-accent"
+          >
+            <Icon name="mdi:trash-can-outline" class="size-4" />
+            Remove
+          </button>
+        </div>
+      </div>
+    </li>
+  </template>
+</cart-drawer>
+
+<script>
+  import {
+    CART_CHANGE,
+    CART_OPEN,
+    MAX_QUANTITY,
+    cartCount,
+    cartSubtotal,
+    formatPrice,
+    getCart,
+    openCart,
+    removeFromCart,
+    updateQuantity,
+    type CartItem,
+  } from "../scripts/cart";
+
+  class CartDrawer extends HTMLElement {
+    #dialog!: HTMLDialogElement;
+    #onOpen = () => this.open();
+    #onChange = () => this.render();
+
+    connectedCallback() {
+      this.#dialog = this.querySelector("dialog")!;
+      window.addEventListener(CART_OPEN, this.#onOpen);
+      window.addEventListener(CART_CHANGE, this.#onChange);
+
+      this.#dialog.addEventListener("click", (event) => {
+        const target = event.target as HTMLElement;
+        // Clicking the backdrop targets the dialog element itself.
+        if (target === this.#dialog || target.closest("[data-cart-close]")) {
+          this.close();
+        }
+        if (target.closest("[data-cart-checkout]")) {
+          this.query("[data-cart-checkout-note]").textContent =
+            "This is a demo store — checkout is disabled.";
+        }
+      });
+
+      this.render();
+    }
+
+    disconnectedCallback() {
+      window.removeEventListener(CART_OPEN, this.#onOpen);
+      window.removeEventListener(CART_CHANGE, this.#onChange);
+    }
+
+    open() {
+      this.render();
+      this.query("[data-cart-checkout-note]").textContent = "";
+      if (!this.#dialog.open) this.#dialog.showModal();
+    }
+
+    close() {
+      this.#dialog.close();
+    }
+
+    query<T extends HTMLElement = HTMLElement>(selector: string): T {
+      return this.querySelector<T>(selector)!;
+    }
+
+    render() {
+      const items = getCart();
+      const count = cartCount(items);
+      const subtotal = cartSubtotal(items);
+      const threshold = Number(this.dataset.freeShipping ?? 0);
+
+      this.query("[data-cart-heading-count]").textContent = count
+        ? `(${count})`
+        : "";
+      this.query("[data-cart-empty]").hidden = count > 0;
+      this.query("[data-cart-footer]").hidden = count === 0;
+      this.query("[data-cart-shipping]").hidden = count === 0;
+      this.query("[data-cart-subtotal]").textContent = formatPrice(subtotal);
+
+      const remaining = Math.max(0, threshold - subtotal);
+      const progress = threshold
+        ? Math.min(100, Math.round((subtotal / threshold) * 100))
+        : 100;
+      const text = this.query("[data-cart-shipping-text]");
+      if (remaining > 0) {
+        const strong = document.createElement("strong");
+        strong.className = "font-semibold text-ink";
+        strong.textContent = formatPrice(remaining);
+        text.replaceChildren("You're ", strong, " away from free shipping.");
+      } else {
+        text.textContent = "Nice! Your order ships for free.";
+      }
+      this.query("[data-cart-shipping-fill]").style.width = `${progress}%`;
+      this.query("[data-cart-shipping-bar]").setAttribute(
+        "aria-valuenow",
+        String(progress),
+      );
+
+      // Re-rendering replaces the buttons, so remember which one had focus.
+      const focusKey = (document.activeElement as HTMLElement | null)?.dataset
+        ?.focusKey;
+      const list = this.query<HTMLUListElement>("[data-cart-items]");
+      list.replaceChildren(...items.map((item) => this.renderItem(item)));
+
+      if (focusKey && this.#dialog.open) {
+        const target =
+          list.querySelector<HTMLElement>(
+            `[data-focus-key="${CSS.escape(focusKey)}"]:not(:disabled)`,
+          ) ?? this.query("[data-cart-close]");
+        target.focus();
+      }
+    }
+
+    renderItem(item: CartItem) {
+      const template = this.query<HTMLTemplateElement>(
+        "[data-cart-item-template]",
+      );
+      const node = template.content.firstElementChild!.cloneNode(
+        true,
+      ) as HTMLLIElement;
+      const href = `/product/${item.slug}`;
+      const label = `${item.name}, size ${item.size}`;
+
+      node
+        .querySelectorAll<HTMLAnchorElement>("[data-item-link]")
+        .forEach((link) => {
+          link.href = href;
+          link.addEventListener("click", () => this.close());
+        });
+      node
+        .querySelector("[data-item-link]")
+        ?.setAttribute("aria-hidden", "true");
+      node.querySelector("[data-item-link]")?.setAttribute("tabindex", "-1");
+
+      const image = node.querySelector<HTMLImageElement>("[data-item-image]")!;
+      image.src = item.cover;
+      node.querySelector("[data-item-name]")!.textContent = item.name;
+      node.querySelector("[data-item-size]")!.textContent =
+        `Size ${item.size} · ${formatPrice(item.price)}`;
+      node.querySelector("[data-item-total]")!.textContent = formatPrice(
+        item.price * item.quantity,
+      );
+      node.querySelector("[data-item-quantity]")!.textContent = String(
+        item.quantity,
+      );
+
+      const decrement = node.querySelector<HTMLButtonElement>(
+        "[data-item-decrement]",
+      )!;
+      decrement.dataset.focusKey = `${item.slug}|${item.size}|decrement`;
+      decrement.setAttribute("aria-label", `Decrease quantity of ${label}`);
+      decrement.addEventListener("click", () =>
+        updateQuantity(item.slug, item.size, item.quantity - 1),
+      );
+
+      const increment = node.querySelector<HTMLButtonElement>(
+        "[data-item-increment]",
+      )!;
+      increment.dataset.focusKey = `${item.slug}|${item.size}|increment`;
+      increment.setAttribute("aria-label", `Increase quantity of ${label}`);
+      increment.disabled = item.quantity >= MAX_QUANTITY;
+      increment.addEventListener("click", () =>
+        updateQuantity(item.slug, item.size, item.quantity + 1),
+      );
+
+      const remove =
+        node.querySelector<HTMLButtonElement>("[data-item-remove]")!;
+      remove.dataset.focusKey = `${item.slug}|${item.size}|remove`;
+      remove.setAttribute("aria-label", `Remove ${label} from bag`);
+      remove.addEventListener("click", () =>
+        removeFromCart(item.slug, item.size),
+      );
+
+      return node;
+    }
+  }
+
+  if (!customElements.get("cart-drawer")) {
+    customElements.define("cart-drawer", CartDrawer);
+  }
+
+  // Any element with [data-cart-open] opens the drawer. The document survives
+  // View Transition navigations, so a single delegated listener is enough.
+  document.addEventListener("click", (event) => {
+    if ((event.target as HTMLElement).closest?.("[data-cart-open]")) {
+      openCart();
+    }
+  });
+</script>

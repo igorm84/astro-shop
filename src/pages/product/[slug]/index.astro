@@ -1,21 +1,56 @@
 ---
-import { type Product, products } from "../../../data";
+import { Icon } from "astro-icon/components";
+import {
+  FREE_SHIPPING_THRESHOLD,
+  type Product,
+  formatPrice,
+  products,
+} from "../../../data";
 import Layout from "../../../layouts/Layout.astro";
 import ProductCard from "../../../components/ProductCard.astro";
-import { Icon } from "astro-icon/components";
-const { slug } = Astro.params;
+import AddToCart from "../../../components/AddToCart.astro";
 
 export function getStaticPaths() {
-  return [
-    ...products.map((product) => ({
-      params: {
-        slug: product.slug,
-      },
-    })),
-  ];
+  return products.map((product) => ({
+    params: { slug: product.slug },
+    props: { product },
+  }));
 }
 
-const product = products.find((product) => product.slug === slug) as Product;
+interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+const { slug } = product;
+
+const similar = products.filter(
+  (p) => p.category === product.category && p.id !== product.id,
+);
+
+const perks = [
+  {
+    icon: "mdi:truck-fast-outline",
+    text: `Free shipping on orders over ${formatPrice(FREE_SHIPPING_THRESHOLD)}`,
+  },
+  { icon: "mdi:autorenew", text: "Free 30-day returns and exchanges" },
+  { icon: "mdi:shield-check-outline", text: "Secure checkout" },
+];
+
+const accordions = [
+  {
+    title: "Details & fit",
+    body: `${product.name} in ${product.color.toLowerCase()}. A regular fit that sits comfortably at the hip — our model is 1.85 m and wears size M. If you're between sizes, we recommend sizing up for a relaxed look.`,
+  },
+  {
+    title: "Materials & care",
+    body: "100% organic cotton, 180 gsm. Machine wash cold, inside out, with similar colours. Tumble dry low or hang to dry. Do not bleach.",
+  },
+  {
+    title: "Shipping & returns",
+    body: `Orders ship within 1–2 business days. Shipping is free on orders over ${formatPrice(FREE_SHIPPING_THRESHOLD)}. Not quite right? Return or exchange within 30 days, free of charge.`,
+  },
+];
 ---
 
 <Layout
@@ -23,79 +58,181 @@ const product = products.find((product) => product.slug === slug) as Product;
   description={product.description}
   image={product.cover}
 >
-  <div class="max-w-5xl mx-auto relative">
-    <a
-      href="/"
-      class="absolute xl:-left-14 top-8 xl:-top-1 xl:bg-none shop-back-background rounded-sm p-2 z-10"
-    >
-      <Icon name="mdi:chevron-left" class="h-6 w-6" />
-    </a>
-    <div class="flex gap-2 pb-2 items-center text-gray-500">
-      <a class="after:content-['/'] after:pl-2 capitalize" href="/">
-        home
-      </a>
-      <span class="after:content-['/'] after:pl-2 capitalize">
-        {product.category}
-      </span>
-      <span>{product.name}</span>
-    </div>
-    <div class="flex flex-col md:flex-row sm sm:gap-8">
-      <div class="max-w-[450px] w-full h-full max-h-[450px]">
-        <img
-          src={product.cover}
-          alt={product.name}
-          class="w-full h-full object-cover rounded-xl shadow-2xl shadow-gray-200 border-b"
-          transition:name={`${slug} image`}
-        />
-      </div>
-      <article class="py-4 flex justify-between flex-col">
-        <div>
-          <h1 class="text-3xl sm:text-5xl font-bold animate-in">
-            {product.name}
-          </h1>
-          <div transition:name={`${slug} title`}></div>
-          <p
-            class="max-w-sm py-4 text-lg"
-            transition:name={`${slug} description`}
+  <div class="mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8 lg:pt-10">
+    <nav aria-label="Breadcrumb">
+      <ol class="flex flex-wrap items-center gap-1.5 text-sm text-muted">
+        <li>
+          <a
+            href="/"
+            class="inline-flex items-center gap-1 transition-colors hover:text-ink"
           >
-            {product.description}
-          </p>
-        </div>
-        <div class="pt-2 sm:pt-8 text-right">
-          <div class="text-3xl font-semibold" transition:name={`${slug} price`}>
-            ${product.price}
+            <Icon name="mdi:chevron-left" class="size-4 sm:hidden" />
+            Home
+          </a>
+        </li>
+        <li class="hidden items-center gap-1.5 sm:flex" aria-hidden="true">
+          <Icon name="mdi:chevron-right" class="size-4 text-line" />
+        </li>
+        <li class="hidden sm:block">
+          <a
+            href="/#products"
+            class="capitalize transition-colors hover:text-ink"
+          >
+            {product.category}
+          </a>
+        </li>
+        <li class="hidden items-center sm:flex" aria-hidden="true">
+          <Icon name="mdi:chevron-right" class="size-4 text-line" />
+        </li>
+        <li class="hidden text-ink sm:block" aria-current="page">
+          {product.name}
+        </li>
+      </ol>
+    </nav>
+
+    <div class="mt-6 grid gap-10 lg:grid-cols-12 lg:gap-16">
+      <!-- Media -->
+      <figure class="lg:col-span-7">
+        <div class="lg:sticky lg:top-24">
+          <div class="relative overflow-hidden rounded-3xl bg-white ring-1 ring-line/70">
+            <img
+              src={product.cover}
+              alt={product.name}
+              width="768"
+              height="768"
+              fetchpriority="high"
+              class="aspect-square w-full object-cover"
+              transition:name={`${slug} image`}
+            />
+            {product.badge && (
+              <span class="absolute top-4 left-4 rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold tracking-wide uppercase shadow-sm backdrop-blur">
+                {product.badge}
+              </span>
+            )}
           </div>
-          <div class="text-xs text-gray-500">* This is a fictional price</div>
-          <button
-            type="button"
-            class="mt-4 px-5 py-2 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-[9999px]"
-          >
-            Add to cart
-          </button>
+          <figcaption class="mt-3 flex items-center gap-1.5 text-xs text-muted">
+            <Icon name="mdi:camera-outline" class="size-3.5" />
+            Photo by
+            <a
+              href={product.coverCredits}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="underline underline-offset-2 hover:text-ink"
+            >
+              {product.coverAuthor}
+            </a>
+            on Unsplash
+          </figcaption>
         </div>
-      </article>
+      </figure>
+
+      <!-- Details -->
+      <div class="lg:col-span-5 lg:py-4">
+        <p class="text-xs font-semibold tracking-[0.2em] text-muted uppercase">
+          {product.category} · {product.color}
+        </p>
+        <h1
+          class="mt-3 animate-fade-up font-display text-5xl leading-none tracking-tight sm:text-6xl"
+          data-hide-on-leave
+        >
+          {product.name}
+        </h1>
+        <div transition:name={`${slug} title`}></div>
+
+        <div class="mt-5 flex items-baseline gap-3">
+          <p
+            class="text-3xl font-semibold tabular-nums"
+            transition:name={`${slug} price`}
+          >
+            {formatPrice(product.price)}
+          </p>
+          <p class="text-xs text-muted">Tax included · fictional price</p>
+        </div>
+
+        <p
+          class="mt-6 text-lg leading-relaxed text-ink-soft"
+          transition:name={`${slug} description`}
+        >
+          {product.description}
+        </p>
+
+        <ul class="mt-6 space-y-2">
+          {product.highlights.map((highlight) => (
+            <li class="flex items-center gap-2.5 text-sm text-ink-soft">
+              <span class="grid size-5 place-items-center rounded-full bg-accent-soft text-accent">
+                <Icon name="mdi:check" class="size-3.5" />
+              </span>
+              {highlight}
+            </li>
+          ))}
+        </ul>
+
+        <div class="mt-8 border-t border-line pt-8">
+          <AddToCart {product} />
+        </div>
+
+        <ul class="mt-8 grid gap-3 rounded-2xl border border-line bg-white/70 p-5">
+          {perks.map((perk) => (
+            <li class="flex items-center gap-3 text-sm">
+              <Icon name={perk.icon} class="size-5 shrink-0 text-ink-soft" />
+              {perk.text}
+            </li>
+          ))}
+        </ul>
+
+        <div class="mt-8 divide-y divide-line border-y border-line">
+          {accordions.map((item, index) => (
+            <details class="group" open={index === 0}>
+              <summary class="flex cursor-pointer list-none items-center justify-between py-5 text-sm font-semibold">
+                {item.title}
+                <Icon
+                  name="mdi:chevron-down"
+                  class="accordion-icon size-5 text-muted transition-transform duration-300"
+                />
+              </summary>
+              <p class="pb-5 text-sm leading-relaxed text-ink-soft">
+                {item.body}
+              </p>
+            </details>
+          ))}
+        </div>
+      </div>
     </div>
-    <div class="py-6 md:py-20 max-w-3xl">
-      Lorem ipsum dolor sit, amet consectetur adipisicing elit. Incidunt magnam
-      quia, explicabo dolor velit aut omnis natus consequatur possimus fuga illo
-      commodi asperiores dignissimos. Consequuntur nam quae commodi quas, magni
-    </div>
-    <h4 class="font-bold text-lg">Similar products</h4>
-    <div class="flex flex-wrap justify-center sm:justify-normal gap-4">
-      {products
-        .filter((p) => p.category === product.category && p.id !== product.id)
-        .map((pr) => (
-          <ProductCard product={pr} />
-        ))}
-    </div>
+
+    {similar.length > 0 && (
+      <section class="mt-24" aria-labelledby="similar-title">
+        <div class="flex items-end justify-between gap-4">
+          <h2
+            id="similar-title"
+            class="font-display text-4xl tracking-tight sm:text-5xl"
+          >
+            You may also like
+          </h2>
+          <a
+            href="/#products"
+            class="group hidden items-center gap-1 text-sm font-medium sm:inline-flex"
+          >
+            View all
+            <Icon
+              name="mdi:arrow-right"
+              class="size-4 transition-transform group-hover:translate-x-0.5"
+            />
+          </a>
+        </div>
+        <div class="mt-10 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-12 lg:grid-cols-4">
+          {similar.map((pr, index) => (
+            <ProductCard product={pr} {index} />
+          ))}
+        </div>
+      </section>
+    )}
   </div>
 </Layout>
 
 <script>
-  document.addEventListener("click", (event) => {
-    if (location.pathname === "/") return;
-    if ((event as any)?.target?.tagName === "A") {
-      document.querySelector(".animate-in")?.classList.add("opacity-0");
-    }
+  // Hide the large heading before navigating away so it doesn't linger while
+  // the shared elements (image, price…) morph to their new positions.
+  document.addEventListener("astro:before-preparation", () => {
+    document.querySelector("[data-hide-on-leave]")?.classList.add("opacity-0");
   });
 </script>

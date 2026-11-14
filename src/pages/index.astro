@@ -1,19 +1,280 @@
 ---
+import { Icon } from "astro-icon/components";
 import Layout from "../layouts/Layout.astro";
-import { products } from "../data";
+import { FREE_SHIPPING_THRESHOLD, formatPrice, products } from "../data";
 import ProductCard from "../components/ProductCard.astro";
+
+const featured = products[0]!;
+const lowestPrice = Math.min(...products.map((p) => p.price));
+
+const perks = [
+  {
+    icon: "mdi:truck-fast-outline",
+    title: "Free shipping",
+    text: `On every order over ${formatPrice(FREE_SHIPPING_THRESHOLD)}`,
+  },
+  {
+    icon: "mdi:autorenew",
+    title: "30-day returns",
+    text: "Changed your mind? No problem",
+  },
+  {
+    icon: "mdi:shield-check-outline",
+    title: "Secure checkout",
+    text: "Encrypted, safe and simple",
+  },
+  {
+    icon: "mdi:leaf",
+    title: "Responsibly made",
+    text: "Organic and recycled fibres",
+  },
+];
 ---
 
 <Layout title="Shop">
-  <div class="flex gap-3 items-end">
-    <h1 class="text-4xl font-bold">Astro Shop</h1>
-  </div>
-  <h3 class="text-xl text-gray-500">
-    Take a look in our products, feel free to buy some
-  </h3>
-  <div class="flex flex-wrap justify-center sm:justify-normal gap-4 py-8">
-    {products.map((product) => (
-      <ProductCard {product} />
-    ))}
-  </div>
+  <!-- Hero -->
+  <section class="mx-auto max-w-7xl px-4 pt-10 pb-16 sm:px-6 lg:px-8 lg:pt-16">
+    <div class="grid items-center gap-12 lg:grid-cols-12">
+      <div class="lg:col-span-6">
+        <p class="inline-flex animate-fade-up items-center gap-2 rounded-full border border-line bg-white px-3 py-1 text-xs font-medium text-ink-soft">
+          <span class="size-1.5 rounded-full bg-accent"></span>
+          New season · {products.length} essential shirts
+        </p>
+        <h1 class="mt-6 animate-fade-up font-display text-6xl leading-[0.95] tracking-tight [animation-delay:80ms] sm:text-7xl xl:text-8xl">
+          Everyday shirts, <em class="text-accent">made to move.</em>
+        </h1>
+        <p class="mt-6 max-w-md animate-fade-up text-lg leading-relaxed text-ink-soft [animation-delay:160ms]">
+          Take a look at our products and feel free to buy some. Thoughtfully
+          designed basics, from {formatPrice(lowestPrice)}.
+        </p>
+        <div class="mt-8 flex animate-fade-up flex-wrap items-center gap-3 [animation-delay:240ms]">
+          <a
+            href="#products"
+            class="group inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3.5 text-sm font-semibold text-paper transition-colors hover:bg-ink-soft"
+          >
+            Shop the collection
+            <Icon
+              name="mdi:arrow-right"
+              class="size-4 transition-transform group-hover:translate-x-0.5"
+            />
+          </a>
+          <a
+            href="#about"
+            class="inline-flex items-center gap-2 rounded-full border border-line bg-white px-6 py-3.5 text-sm font-semibold transition-colors hover:border-ink"
+          >
+            Our story
+          </a>
+        </div>
+      </div>
+
+      <div class="relative lg:col-span-6">
+        <div class="relative aspect-[5/4] overflow-hidden rounded-[2rem] bg-sand sm:aspect-[4/3]">
+          <div
+            class="absolute -top-24 -right-24 size-72 rounded-full bg-accent-soft blur-2xl"
+            aria-hidden="true"
+          ></div>
+          <img
+            src={featured.cover}
+            alt=""
+            width="768"
+            height="768"
+            fetchpriority="high"
+            class="relative mx-auto h-full object-contain mix-blend-multiply"
+          />
+          <div
+            class="absolute top-5 right-5 grid size-24 animate-[spin_18s_linear_infinite] place-items-center rounded-full bg-ink text-center text-[10px] font-semibold tracking-[0.2em] text-paper uppercase sm:size-28"
+            aria-hidden="true"
+          >
+            <span class="leading-tight">
+              Free
+              <br />
+              returns
+              <br />
+              30 days
+            </span>
+          </div>
+        </div>
+
+        <a
+          href={`/product/${featured.slug}`}
+          class="group absolute -bottom-6 left-4 flex items-center gap-3 rounded-2xl bg-white p-2 pr-5 shadow-xl shadow-ink/10 ring-1 ring-line/70 transition-transform hover:-translate-y-0.5 sm:left-8"
+        >
+          <img
+            src={featured.cover}
+            alt=""
+            width="64"
+            height="64"
+            class="size-14 rounded-xl border border-line object-cover"
+          />
+          <span class="flex flex-col">
+            <span class="text-[11px] font-semibold tracking-wide text-accent uppercase">
+              {featured.badge ?? "Featured"}
+            </span>
+            <span class="text-sm font-medium">{featured.name}</span>
+            <span class="text-sm text-muted tabular-nums">
+              {formatPrice(featured.price)}
+            </span>
+          </span>
+          <Icon
+            name="mdi:chevron-right"
+            class="ml-2 size-5 text-muted transition-transform group-hover:translate-x-0.5"
+          />
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Perks -->
+  <section
+    aria-label="Why shop with us"
+    class="border-y border-line bg-white/60"
+  >
+    <ul class="mx-auto grid max-w-7xl grid-cols-2 gap-px px-4 sm:px-6 lg:grid-cols-4 lg:px-8">
+      {perks.map((perk) => (
+        <li class="flex items-start gap-3 py-6 sm:items-center sm:px-4 lg:first:pl-0">
+          <span class="grid size-10 shrink-0 place-items-center rounded-full bg-sand text-ink">
+            <Icon name={perk.icon} class="size-5" />
+          </span>
+          <span>
+            <span class="block text-sm font-semibold">{perk.title}</span>
+            <span class="block text-xs text-muted">{perk.text}</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- Products -->
+  <section
+    id="products"
+    class="mx-auto max-w-7xl scroll-mt-20 px-4 pt-20 sm:px-6 lg:px-8"
+  >
+    <product-grid>
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h2 class="font-display text-5xl tracking-tight">The collection</h2>
+          <p class="mt-2 text-muted">{products.length} products · Shirts</p>
+        </div>
+        <label class="flex items-center gap-3 text-sm">
+          <span class="text-muted">Sort by</span>
+          <span class="relative">
+            <select
+              data-sort
+              class="appearance-none rounded-full border border-line bg-white py-2 pr-10 pl-4 font-medium transition-colors hover:border-ink"
+            >
+              <option value="featured">Featured</option>
+              <option value="price-asc">Price: low to high</option>
+              <option value="price-desc">Price: high to low</option>
+              <option value="name">Name: A–Z</option>
+            </select>
+            <Icon
+              name="mdi:chevron-down"
+              class="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted"
+            />
+          </span>
+        </label>
+      </div>
+
+      <div
+        data-grid
+        class="mt-10 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-12 lg:grid-cols-4"
+      >
+        {products.map((product, index) => (
+          <ProductCard {product} {index} />
+        ))}
+      </div>
+    </product-grid>
+  </section>
+
+  <!-- About / Story -->
+  <section
+    id="about"
+    class="mx-auto mt-24 max-w-7xl scroll-mt-20 px-4 sm:px-6 lg:px-8"
+  >
+    <div class="relative overflow-hidden rounded-[2rem] bg-ink px-6 py-16 text-paper sm:px-12 lg:px-16 lg:py-20">
+      <div
+        class="absolute -bottom-32 -left-20 size-96 rounded-full bg-accent/30 blur-3xl"
+        aria-hidden="true"
+      ></div>
+      <div class="relative grid gap-10 lg:grid-cols-2 lg:items-end">
+        <div>
+          <p class="text-xs font-semibold tracking-[0.2em] text-paper/60 uppercase">
+            Our story
+          </p>
+          <h2 class="mt-4 font-display text-5xl leading-[1.05] tracking-tight sm:text-6xl">
+            Seamless from <em class="text-accent-soft">click</em> to checkout.
+          </h2>
+        </div>
+        <div>
+          <p class="max-w-md leading-relaxed text-paper/75">
+            Astro Shop is a minimalist storefront built with Astro View
+            Transitions. Open any product and watch the image, price and details
+            glide into place — no full page reloads, no layout jumps.
+          </p>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a
+              href="https://github.com/codrops/astro-shop-view-transitions"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 rounded-full bg-paper px-5 py-3 text-sm font-semibold text-ink transition-colors hover:bg-white"
+            >
+              Read the tutorial
+              <Icon name="mdi:arrow-right" class="size-4" />
+            </a>
+            <a
+              href="https://github.com/igorm84/astro-shop"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 rounded-full border border-paper/20 px-5 py-3 text-sm font-semibold transition-colors hover:border-paper/60"
+            >
+              <Icon name="mdi:github" class="size-4" />
+              Source code
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </Layout>
+
+<script>
+  class ProductGrid extends HTMLElement {
+    connectedCallback() {
+      const select = this.querySelector<HTMLSelectElement>("[data-sort]");
+      const grid = this.querySelector<HTMLElement>("[data-grid]");
+      if (!select || !grid) return;
+
+      select.addEventListener("change", () => {
+        const cards = [
+          ...grid.querySelectorAll<HTMLElement>("[data-product-card]"),
+        ];
+        const price = (el: HTMLElement) => Number(el.dataset.price);
+        const compare: Record<
+          string,
+          (a: HTMLElement, b: HTMLElement) => number
+        > = {
+          featured: (a, b) => Number(a.dataset.index) - Number(b.dataset.index),
+          "price-asc": (a, b) => price(a) - price(b),
+          "price-desc": (a, b) => price(b) - price(a),
+          name: (a, b) =>
+            (a.dataset.name ?? "").localeCompare(b.dataset.name ?? ""),
+        };
+        const sorted = cards.sort(compare[select.value] ?? compare.featured);
+
+        const reorder = () => grid.append(...sorted);
+        if (
+          "startViewTransition" in document &&
+          !matchMedia("(prefers-reduced-motion: reduce)").matches
+        ) {
+          document.startViewTransition(reorder);
+        } else {
+          reorder();
+        }
+      });
+    }
+  }
+
+  if (!customElements.get("product-grid")) {
+    customElements.define("product-grid", ProductGrid);
+  }
+</script>
