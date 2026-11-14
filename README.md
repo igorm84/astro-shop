@@ -11,7 +11,7 @@ Astro Shop is a minimalist page with [Astro View Transitions](https://docs.astro
 
 ### Development and validation
 
-Use Node.js 22.22.0 or newer and pnpm 10.34.7 (pinned in `package.json`). With Corepack enabled:
+Use Node.js 22.23.4 or newer (required by Astro 7.4.5+) and pnpm 10.34.7 (pinned in `package.json`). With Corepack enabled:
 
 ```sh
 corepack pnpm install --frozen-lockfile
