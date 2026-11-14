@@ -1,13 +1,13 @@
 ---
-import { Icon } from "astro-icon/components";
 import Layout from "../layouts/Layout.astro";
 import { products } from "../data";
 import ProductCard from "../components/ProductCard.astro";
+import SortMenu from "../components/SortMenu.astro";
 ---
 
 <Layout title="Shop">
   <product-grid class="mx-auto block max-w-6xl px-4 pt-10 sm:px-6 sm:pt-16">
-    <div class="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+    <div class="flex flex-col items-start gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
       <div>
         <h1 class="text-4xl leading-none font-bold tracking-tight font-stretch-expanded sm:text-5xl">
           Shirts
@@ -16,22 +16,15 @@ import ProductCard from "../components/ProductCard.astro";
           Everyday shirts in black and white. Pick one to see it up close.
         </p>
       </div>
-      <label class="relative">
-        <span class="sr-only">Sort shirts</span>
-        <select
-          data-sort
-          class="appearance-none bg-transparent py-1 pr-6 font-medium transition-colors hover:text-muted"
-        >
-          <option value="featured">Featured</option>
-          <option value="price-asc">Lowest price</option>
-          <option value="price-desc">Highest price</option>
-          <option value="name">Name</option>
-        </select>
-        <Icon
-          name="mdi:chevron-down"
-          class="pointer-events-none absolute top-1/2 right-0 size-4 -translate-y-1/2"
-        />
-      </label>
+      <SortMenu
+        label="Sort shirts"
+        options={[
+          { value: "featured", label: "Featured" },
+          { value: "price-asc", label: "Lowest price" },
+          { value: "price-desc", label: "Highest price" },
+          { value: "name", label: "Name" },
+        ]}
+      />
     </div>
 
     <div
@@ -48,11 +41,13 @@ import ProductCard from "../components/ProductCard.astro";
 <script>
   class ProductGrid extends HTMLElement {
     connectedCallback() {
-      const select = this.querySelector<HTMLSelectElement>("[data-sort]");
+      const sort = this.querySelector<HTMLElement & { value: string }>(
+        "sort-menu",
+      );
       const grid = this.querySelector<HTMLElement>("[data-grid]");
-      if (!select || !grid) return;
+      if (!sort || !grid) return;
 
-      select.addEventListener("change", () => {
+      sort.addEventListener("change", () => {
         const cards = [
           ...grid.querySelectorAll<HTMLElement>("[data-product-card]"),
         ];
@@ -67,7 +62,7 @@ import ProductCard from "../components/ProductCard.astro";
           name: (a, b) =>
             (a.dataset.name ?? "").localeCompare(b.dataset.name ?? ""),
         };
-        const sorted = cards.sort(compare[select.value] ?? compare.featured);
+        const sorted = cards.sort(compare[sort.value] ?? compare.featured);
 
         const reorder = () => grid.append(...sorted);
         if (

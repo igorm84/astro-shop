@@ -6,6 +6,7 @@ interface Props {
 }
 
 const { product } = Astro.props;
+const DEFAULT_SIZE = "M";
 ---
 
 <add-to-cart
@@ -15,25 +16,28 @@ const { product } = Astro.props;
   data-cover={product.cover}
 >
   <form>
-    <fieldset>
-      <legend class="text-sm font-medium">Size</legend>
-      <div class="mt-3 flex flex-wrap gap-2">
-        {sizes.map((size) => (
-          <label>
-            <input
-              type="radio"
-              name="size"
-              value={size}
-              checked={size === "M"}
-              class="peer sr-only"
-            />
-            <span class="flex h-11 w-13 items-center justify-center rounded-sm border border-line text-sm transition-colors peer-checked:border-ink peer-checked:bg-ink peer-checked:text-paper peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-ink hover:border-ink">
-              {size}
-            </span>
-          </label>
-        ))}
-      </div>
-    </fieldset>
+    <p id="size-label" class="text-sm font-medium">
+      Size
+    </p>
+    <div
+      role="radiogroup"
+      aria-labelledby="size-label"
+      data-sizes
+      class="mt-3 flex flex-wrap gap-2"
+    >
+      {sizes.map((size) => (
+        <button
+          type="button"
+          role="radio"
+          data-size={size}
+          aria-checked={size === DEFAULT_SIZE ? "true" : "false"}
+          tabindex={size === DEFAULT_SIZE ? 0 : -1}
+          class="flex h-11 w-13 items-center justify-center rounded-sm border border-line text-sm transition-colors hover:border-ink aria-checked:border-ink aria-checked:bg-ink aria-checked:text-paper"
+        >
+          {size}
+        </button>
+      ))}
+    </div>
 
     <button
       type="submit"
@@ -52,13 +56,49 @@ const { product } = Astro.props;
     connectedCallback() {
       const form = this.querySelector("form")!;
       const label = form.querySelector<HTMLElement>("[data-label]")!;
+      const group = form.querySelector<HTMLElement>("[data-sizes]")!;
+      const radios = [
+        ...group.querySelectorAll<HTMLButtonElement>("[role=radio]"),
+      ];
       let timer: ReturnType<typeof setTimeout> | undefined;
+
+      // Radio-group behaviour: one tab stop, arrow keys move and select.
+      const check = (radio: HTMLButtonElement) => {
+        for (const r of radios) {
+          const on = r === radio;
+          r.setAttribute("aria-checked", String(on));
+          r.tabIndex = on ? 0 : -1;
+        }
+        radio.focus();
+      };
+      const selected = () =>
+        radios.find((r) => r.getAttribute("aria-checked") === "true") ??
+        radios[0];
+
+      group.addEventListener("click", (event) => {
+        const radio = (event.target as HTMLElement).closest<HTMLButtonElement>(
+          "[role=radio]",
+        );
+        if (radio) check(radio);
+      });
+      group.addEventListener("keydown", (event) => {
+        const step = {
+          ArrowRight: 1,
+          ArrowDown: 1,
+          ArrowLeft: -1,
+          ArrowUp: -1,
+        }[event.key];
+        if (!step) return;
+        event.preventDefault();
+        const i = radios.indexOf(selected());
+        check(radios[(i + step + radios.length) % radios.length]);
+      });
 
       form.addEventListener("submit", (event) => {
         event.preventDefault();
         const { slug, name, price, cover } = this.dataset;
         if (!slug || !name || !price || !cover) return;
-        const size = String(new FormData(form).get("size") ?? "M");
+        const size = selected().dataset.size ?? "M";
 
         addToCart({
           slug,

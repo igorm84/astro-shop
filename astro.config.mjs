@@ -8,7 +8,7 @@ export default defineConfig({
   integrations: [
     icon({
       include: {
-        mdi: ["github", "chevron-down", "close", "plus", "minus"],
+        mdi: ["github", "chevron-down", "check", "close", "plus", "minus"],
       },
     }),
   ],
