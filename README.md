@@ -11,7 +11,7 @@ Astro Shop is a minimalist page with [Astro View Transitions](https://docs.astro
 
 ### Development and validation
 
-Use Node.js 22.23.4 or newer (required by Astro 7.4.5+) and pnpm 10.34.7 (pinned in `package.json`). With Corepack enabled:
+Use Node.js 22.23.4 or newer (required by Astro 7.4.12) and pnpm 10.34.7 (pinned in `package.json`). With Corepack enabled:
 
 ```sh
 corepack pnpm install --frozen-lockfile
@@ -38,7 +38,7 @@ View Transitions is a browser mechanism to animate between DOM states, learn mor
 
 #### Browser Support
 
-Same-document View Transitions are Baseline 2025: Chrome/Edge 111+, Safari/iOS 18+ and Firefox 144+. In older browsers, Astro's `<ClientRouter />` falls back gracefully and navigation still works without the animation. See https://developer.mozilla.org/en-US/docs/Web/API/View_Transitions_API#browser_compatibility
+Same-document View Transitions are Baseline 2025: Chrome/Edge 111+, Safari/iOS 18+ and Firefox 144+. In older browsers, Astro's `<ClientRouter />` falls back to a simulated animation, so navigation still works. See https://developer.mozilla.org/en-US/docs/Web/API/View_Transitions_API#browser_compatibility
 
 ## License
 
