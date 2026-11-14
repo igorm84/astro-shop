@@ -2,29 +2,18 @@
 const year = new Date().getFullYear();
 ---
 
-<footer class="mt-24 border-t border-line">
-  <div class="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-8 text-xs text-muted sm:flex-row sm:justify-between sm:px-6">
+<footer class="mt-28">
+  <div class="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-10 text-sm text-muted sm:flex-row sm:justify-between sm:px-6">
+    <p>Demo store. Prices are fictional and nothing ships.</p>
     <p>
       © 2023–{year}{" "}
       <a
         href="https://github.com/igorm84"
         target="_blank"
         rel="noopener noreferrer"
-        class="hover:text-ink"
+        class="underline-offset-4 hover:text-ink hover:underline"
       >
         Igor Penaque
-      </a>
-      . Prices are fictional.
-    </p>
-    <p>
-      Built with{" "}
-      <a
-        href="https://docs.astro.build/en/guides/view-transitions/"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="hover:text-ink"
-      >
-        Astro View Transitions
       </a>
     </p>
   </div>

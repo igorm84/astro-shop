@@ -5,9 +5,12 @@ import { Icon } from "astro-icon/components";
 <cart-drawer>
   <dialog class="drawer" aria-labelledby="cart-title">
     <div class="flex h-full flex-col">
-      <div class="flex h-14 items-center justify-between border-b border-line px-5">
-        <h2 id="cart-title" class="text-sm font-medium">
-          Bag (<span data-cart-heading-count>0</span>)
+      <div class="flex h-16 items-center justify-between px-5">
+        <h2 id="cart-title" class="text-lg font-bold font-stretch-expanded">
+          Bag{" "}
+          <span data-cart-heading-count class="ml-1 font-normal">
+            0
+          </span>
         </h2>
         <button
           type="button"
@@ -20,27 +23,33 @@ import { Icon } from "astro-icon/components";
       </div>
 
       <div class="flex-1 overflow-y-auto overscroll-contain">
-        <ul data-cart-items class="divide-y divide-line px-5"></ul>
-        <p
-          data-cart-empty
-          class="px-5 py-16 text-center text-sm text-muted"
-          hidden
-        >
+        <ul
+          data-cart-items
+          class="divide-y divide-line border-y border-line px-5"
+        ></ul>
+        <p data-cart-empty class="px-5 py-16 text-muted" hidden>
           Your bag is empty.
+          <a
+            href="/"
+            data-cart-close
+            class="mt-2 block font-medium text-ink underline underline-offset-4"
+          >
+            Browse shirts
+          </a>
         </p>
       </div>
 
-      <div data-cart-footer class="border-t border-line px-5 py-5">
-        <div class="flex justify-between text-sm">
+      <div data-cart-footer class="px-5 py-6">
+        <div class="flex justify-between font-medium">
           <span>Subtotal</span>
           <span data-cart-subtotal class="tabular-nums"></span>
         </div>
         <button
           type="button"
           data-cart-checkout
-          class="mt-4 h-11 w-full rounded-md bg-ink text-sm font-medium text-paper transition-opacity hover:opacity-85"
+          class="mt-5 h-12 w-full rounded-sm bg-ink font-medium text-paper transition-colors hover:bg-ink/80"
         >
-          Checkout
+          Check out
         </button>
         <p
           data-cart-checkout-note
@@ -57,7 +66,7 @@ import { Icon } from "astro-icon/components";
         data-item-link
         tabindex="-1"
         aria-hidden="true"
-        class="block size-20 shrink-0 overflow-hidden rounded-md bg-surface"
+        class="block size-20 shrink-0 overflow-hidden"
       >
         <img data-item-image alt="" class="size-full object-cover" />
       </a>
@@ -141,7 +150,7 @@ import { Icon } from "astro-icon/components";
         }
         if (target.closest("[data-cart-checkout]")) {
           this.query("[data-cart-checkout-note]").textContent =
-            "This is a demo store — checkout is disabled.";
+            "Checkout is turned off in this demo store.";
         }
       });
 
@@ -205,8 +214,7 @@ import { Icon } from "astro-icon/components";
         .forEach((link) => (link.href = `/product/${item.slug}`));
       el<HTMLImageElement>("[data-item-image]").src = item.cover;
       el("[data-item-name]").textContent = item.name;
-      el("[data-item-size]").textContent =
-        `Size ${item.size} · ${formatPrice(item.price)}`;
+      el("[data-item-size]").textContent = `Size ${item.size}`;
       el("[data-item-total]").textContent = formatPrice(
         item.price * item.quantity,
       );

@@ -2,13 +2,13 @@
 import { Icon } from "astro-icon/components";
 ---
 
-<header class="sticky top-0 z-40 border-b border-line bg-paper/90 backdrop-blur">
-  <div class="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
-    <a href="/" class="text-sm font-semibold tracking-tight">
+<header class="sticky top-0 z-40 bg-paper/95 backdrop-blur">
+  <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+    <a href="/" class="text-lg font-bold font-stretch-expanded">
       Astro Shop
     </a>
 
-    <div class="flex items-center gap-5 text-sm">
+    <div class="flex items-center gap-6">
       <a
         href="https://github.com/igorm84/astro-shop"
         target="_blank"
@@ -21,10 +21,10 @@ import { Icon } from "astro-icon/components";
       <button
         type="button"
         data-cart-open
-        class="transition-colors hover:text-muted"
+        class="font-medium transition-colors hover:text-muted"
         aria-label="Open bag"
       >
-        Bag (<cart-count>0</cart-count>)
+        Bag <cart-count class="ml-1 inline-block min-w-[1ch]">0</cart-count>
       </button>
     </div>
   </div>

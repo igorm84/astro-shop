@@ -2,15 +2,15 @@
 
 @theme {
   --font-sans:
-    var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    var(--font-archivo), ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 
-  /* Minimal monochrome palette. */
+  /* White canvas matches the studio photos, so the shirts float on the page. */
   --color-paper: #ffffff;
-  --color-surface: #f5f5f4;
-  --color-ink: #171717;
-  --color-muted: #737373;
-  --color-line: #e5e5e5;
+  --color-ink: #000000;
+  --color-muted: #6b6b6b;
+  --color-line: #dadada;
+  --color-wash: #f4f4f4;
 }
 
 @layer base {
@@ -25,6 +25,7 @@
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-variant-numeric: tabular-nums;
   }
 
   body {
@@ -38,7 +39,7 @@
 
   :focus-visible {
     outline: 2px solid var(--color-ink);
-    outline-offset: 2px;
+    outline-offset: 3px;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -50,6 +51,17 @@
       transition-duration: 0.01ms !important;
     }
   }
+}
+
+/* The rail: products hang from a continuous black line, hooks touching it. */
+@utility rail {
+  border-top: 2px solid var(--color-ink);
+}
+
+/* A shirt swings slightly from its hanger hook when pointed at. */
+@utility hang {
+  transform-origin: 50% 3%;
+  transition: rotate 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* Cart drawer: a native <dialog> sliding in from the right. */
@@ -64,6 +76,7 @@
     max-width: none;
     padding: 0;
     border: 0;
+    border-left: 2px solid var(--color-ink);
     background: var(--color-paper);
     color: inherit;
     transform: translateX(100%);
@@ -84,7 +97,7 @@
   }
 
   .drawer::backdrop {
-    background-color: rgb(0 0 0 / 0%);
+    background-color: rgb(255 255 255 / 0%);
     transition:
       background-color 0.3s,
       overlay 0.3s allow-discrete,
@@ -92,12 +105,12 @@
   }
 
   .drawer[open]::backdrop {
-    background-color: rgb(0 0 0 / 25%);
+    background-color: rgb(255 255 255 / 70%);
   }
 
   @starting-style {
     .drawer[open]::backdrop {
-      background-color: rgb(0 0 0 / 0%);
+      background-color: rgb(255 255 255 / 0%);
     }
   }
 }

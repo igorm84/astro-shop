@@ -8,16 +8,17 @@ export default defineConfig({
   integrations: [
     icon({
       include: {
-        mdi: ["github", "arrow-left", "chevron-down", "close", "plus", "minus"],
+        mdi: ["github", "chevron-down", "close", "plus", "minus"],
       },
     }),
   ],
   fonts: [
     {
       provider: fontProviders.fontsource(),
-      name: "Inter",
-      cssVariable: "--font-inter",
-      weights: ["400 600"],
+      name: "Archivo",
+      cssVariable: "--font-archivo",
+      weights: ["400 700"],
+      stretch: "62% 125%",
       styles: ["normal"],
       subsets: ["latin"],
       fallbacks: ["sans-serif"],

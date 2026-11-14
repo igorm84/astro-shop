@@ -1,5 +1,4 @@
 ---
-import { Icon } from "astro-icon/components";
 import { type Product, formatPrice, products } from "../../../data";
 import Layout from "../../../layouts/Layout.astro";
 import ProductCard from "../../../components/ProductCard.astro";
@@ -29,29 +28,28 @@ const similar = products.filter(
   description={product.description}
   image={product.cover}
 >
-  <div class="mx-auto max-w-6xl px-4 pt-8 sm:px-6">
+  <div class="mx-auto max-w-6xl px-4 pt-6 sm:px-6 sm:pt-10">
     <a
       href="/"
-      class="inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-ink"
+      class="text-sm text-muted underline-offset-4 transition-colors hover:text-ink hover:underline"
     >
-      <Icon name="mdi:arrow-left" class="size-4" />
-      Back
+      All shirts
     </a>
 
-    <div class="mt-6 grid gap-8 md:grid-cols-2 md:gap-12">
+    <div class="mt-6 grid gap-10 md:grid-cols-2 md:gap-14">
       <figure>
-        <div class="overflow-hidden rounded-lg bg-surface">
+        <div class="rail">
           <img
             src={product.cover}
             alt={product.name}
             width="768"
             height="768"
             fetchpriority="high"
-            class="aspect-square w-full object-cover"
+            class="aspect-square w-full object-cover object-top"
             transition:name={`${slug} image`}
           />
         </div>
-        <figcaption class="mt-2 text-xs text-muted">
+        <figcaption class="mt-3 text-xs text-muted">
           Photo by{" "}
           <a
             href={product.coverCredits}
@@ -65,53 +63,49 @@ const similar = products.filter(
         </figcaption>
       </figure>
 
-      <div class="md:pt-2">
+      <div class="md:pt-8">
         <h1
-          class="text-2xl font-semibold tracking-tight sm:text-3xl"
+          class="text-4xl leading-[1.05] font-bold tracking-tight font-stretch-expanded sm:text-5xl"
           data-hide-on-leave
         >
           {product.name}
         </h1>
         <div transition:name={`${slug} title`}></div>
-        <p class="mt-2 text-lg tabular-nums" transition:name={`${slug} price`}>
+        <p class="mt-4 text-xl" transition:name={`${slug} price`}>
           {formatPrice(product.price)}
         </p>
 
         <p
-          class="mt-6 max-w-md leading-relaxed text-muted"
+          class="mt-6 max-w-[34rem] leading-relaxed text-muted"
           transition:name={`${slug} description`}
         >
           {product.description}
         </p>
 
-        <div class="mt-8">
+        <div class="mt-10">
           <AddToCart {product} />
         </div>
 
-        <dl class="mt-10 space-y-3 border-t border-line pt-6 text-sm">
-          <div class="flex gap-4">
-            <dt class="w-20 shrink-0 text-muted">Colour</dt>
-            <dd>{product.color}</dd>
-          </div>
-          <div class="flex gap-4">
-            <dt class="w-20 shrink-0 text-muted">Material</dt>
-            <dd>100% organic cotton</dd>
-          </div>
-          <div class="flex gap-4">
-            <dt class="w-20 shrink-0 text-muted">Shipping</dt>
-            <dd>Free returns within 30 days</dd>
-          </div>
+        <dl class="mt-12 grid grid-cols-[6rem_1fr] gap-y-2 text-sm">
+          <dt class="text-muted">Colour</dt>
+          <dd>{product.color}</dd>
+          <dt class="text-muted">Material</dt>
+          <dd>100% organic cotton</dd>
+          <dt class="text-muted">Returns</dt>
+          <dd>Free within 30 days</dd>
         </dl>
-        <p class="mt-6 text-xs text-muted">* This is a fictional price.</p>
       </div>
     </div>
 
     {similar.length > 0 && (
-      <section class="mt-24" aria-labelledby="similar-title">
-        <h2 id="similar-title" class="text-sm font-medium">
-          Similar products
+      <section class="mt-28" aria-labelledby="similar-title">
+        <h2
+          id="similar-title"
+          class="text-2xl font-bold tracking-tight font-stretch-expanded"
+        >
+          More shirts
         </h2>
-        <div class="mt-6 grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-4">
+        <div class="-mx-2 mt-10 grid grid-cols-2 gap-y-14 sm:-mx-4 lg:grid-cols-4">
           {similar.map((pr, index) => (
             <ProductCard product={pr} {index} />
           ))}
