@@ -18,9 +18,8 @@ const {
   description = "A simple Shop built in Astro using View Transitions and TailwindCSS",
 } = Astro.props;
 
-const imageUrl = import.meta.env.PUBLIC_URL
-  ? new URL(image, import.meta.env.PUBLIC_URL)
-  : image;
+const imageUrl = new URL(image, Astro.site);
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 ---
 
 <!doctype html>
@@ -29,9 +28,11 @@ const imageUrl = import.meta.env.PUBLIC_URL
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
 
     <meta property="og:title" content={title} />
     <meta property="og:type" content="product" />
+    <meta property="og:url" content={canonicalUrl} />
     <meta property="og:image" content={imageUrl} />
     <meta property="og:description" content={description} />
 
